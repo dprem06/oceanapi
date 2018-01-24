@@ -1,26 +1,47 @@
 var express = require('express');
-var mysql = require('mysql');
+var CronJob = require('cron').CronJob;
 var app = express();
+var job = new CronJob('00 30 00 * * 1-7', function() {
+  /*
+   * Runs every weekday (Monday through Friday)
+   * at 11:30:00 AM. It does not run on Saturday
+   * or Sunday.
+   */
+  SendEmail();
+  }, function () {
+    /* This function is executed when the job stops */
+  },
+  true, /* Start the job right now */
+  "Asia/Kolkata" /* Time zone of this job. */
+);
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "root",
-  database: "testdb"
+
+
+function SendEmail(){
+var datetime = new Date();
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'pream.06@gmail.com',
+    pass: 'prem0690'
+  }
 });
 
+var mailOptions = {
+  from: 'pream.06@gmail.com',
+  to: 'pream.06@gmail.com',
+  subject: 'Sending Email using Node.js',
+  text: 'I am worked @ 12 Am'+datetime
+};
 
-app.get('/', function (req, res) {
-    con.connect(function(err) {
-  if (err) throw err;
-  con.query("SELECT * FROM firsttable where Name='prem'", function (err, result, fields) {
-    if (err) throw err;
-    console.log(result);
-    res.send('Data:'+JSON.stringify(result));
-  });
+transporter.sendMail(mailOptions, function(error, info){
+  if (error) {
+    console.log(error);
+  } else {
+    console.log('Email sent: ' + info.response);
+  }
 });
-});
-
+}
 
 var portNum = 4000;
 app.listen(4000, function () {

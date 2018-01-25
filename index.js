@@ -1,7 +1,7 @@
 var express = require('express');
 var CronJob = require('cron').CronJob;
 var app = express();
-var job = new CronJob('00 30 00 * * 1-7', function() {
+var job = new CronJob('00 00 01 * * 1-7', function() {
   /*
    * Runs every weekday (Monday through Friday)
    * at 11:30:00 AM. It does not run on Saturday
